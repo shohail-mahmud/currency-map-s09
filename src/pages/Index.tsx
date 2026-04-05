@@ -3,7 +3,9 @@ import { CollectionPanel } from "../components/CollectionPanel";
 import { ColorLegend } from "../components/ColorLegend";
 import { CountryInfoPanel } from "../components/CountryInfoPanel";
 import { WorldCollectionMap } from "../components/WorldCollectionMap";
+import { AdminLogin } from "../components/AdminLogin";
 import { useCollectionData } from "../hooks/useCollectionData";
+import { useAuth } from "../hooks/useAuth";
 import type { CountryCollection } from "../types/collection";
 
 const Index = () => {
@@ -12,7 +14,8 @@ const Index = () => {
   const [isNotesOpen, setIsNotesOpen] = useState(!isMobileViewport);
   const [selectedCountry, setSelectedCountry] = useState<CountryCollection | null>(null);
 
-  const { data: collectionData = [], isLoading } = useCollectionData();
+  const { data: collectionData = [], isLoading, refetch } = useCollectionData();
+  const { user } = useAuth();
 
   const handleCountrySelect = (country: CountryCollection) => {
     setSelectedCountry((previous) => (previous?.country === country.country ? null : country));
@@ -43,6 +46,8 @@ const Index = () => {
         selectedCountry={selectedCountry?.country}
       />
 
+      <AdminLogin />
+
       <CollectionPanel
         side="left"
         title="Coin Collection"
@@ -62,7 +67,15 @@ const Index = () => {
       />
 
       {selectedCountry && (
-        <CountryInfoPanel selectedCountry={selectedCountry} onClose={() => setSelectedCountry(null)} />
+        <CountryInfoPanel
+          selectedCountry={selectedCountry}
+          onClose={() => setSelectedCountry(null)}
+          isAdmin={!!user}
+          onUpdated={() => {
+            refetch();
+            setSelectedCountry(null);
+          }}
+        />
       )}
 
       <ColorLegend isRightPanelOpen={isNotesOpen} />
