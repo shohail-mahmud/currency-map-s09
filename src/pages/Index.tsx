@@ -3,7 +3,7 @@ import { CollectionPanel } from "../components/CollectionPanel";
 import { ColorLegend } from "../components/ColorLegend";
 import { CountryInfoPanel } from "../components/CountryInfoPanel";
 import { WorldCollectionMap } from "../components/WorldCollectionMap";
-import { collectionData } from "../data/collectionData";
+import { useCollectionData } from "../hooks/useCollectionData";
 import type { CountryCollection } from "../types/collection";
 
 const Index = () => {
@@ -12,18 +12,28 @@ const Index = () => {
   const [isNotesOpen, setIsNotesOpen] = useState(!isMobileViewport);
   const [selectedCountry, setSelectedCountry] = useState<CountryCollection | null>(null);
 
+  const { data: collectionData = [], isLoading } = useCollectionData();
+
   const handleCountrySelect = (country: CountryCollection) => {
     setSelectedCountry((previous) => (previous?.country === country.country ? null : country));
   };
 
   const countriesWithCoins = useMemo(
     () => collectionData.filter((country) => country.coins > 0).sort((a, b) => b.coins - a.coins),
-    []
+    [collectionData]
   );
   const countriesWithNotes = useMemo(
     () => collectionData.filter((country) => country.notes > 0).sort((a, b) => b.notes - a.notes),
-    []
+    [collectionData]
   );
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center bg-[#0F172A] text-[#9CA3AF]">
+        Loading collection…
+      </div>
+    );
+  }
 
   return (
     <div className="relative h-screen w-screen overflow-hidden bg-[#0F172A] text-[#E5E7EB]">
