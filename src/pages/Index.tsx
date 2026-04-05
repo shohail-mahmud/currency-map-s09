@@ -1,16 +1,63 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useMemo, useState } from "react";
+import { CollectionPanel } from "../components/CollectionPanel";
+import { ColorLegend } from "../components/ColorLegend";
+import { CountryInfoPanel } from "../components/CountryInfoPanel";
+import { WorldCollectionMap } from "../components/WorldCollectionMap";
+import { collectionData } from "../data/collectionData";
+import type { CountryCollection } from "../types/collection";
 
-// IMPORTANT: Fully REPLACE this with your own code
-const PlaceholderIndex = () => {
-  // PLACEHOLDER: Replace this entire return statement with the user's app.
-  // The inline background color is intentionally not part of the design system.
+const Index = () => {
+  const isMobileViewport = typeof window !== "undefined" && window.innerWidth < 768;
+  const [isCoinsOpen, setIsCoinsOpen] = useState(!isMobileViewport);
+  const [isNotesOpen, setIsNotesOpen] = useState(!isMobileViewport);
+  const [selectedCountry, setSelectedCountry] = useState<CountryCollection | null>(null);
+
+  const handleCountrySelect = (country: CountryCollection) => {
+    setSelectedCountry((previous) => (previous?.country === country.country ? null : country));
+  };
+
+  const countriesWithCoins = useMemo(
+    () => collectionData.filter((country) => country.coins > 0).sort((a, b) => b.coins - a.coins),
+    []
+  );
+  const countriesWithNotes = useMemo(
+    () => collectionData.filter((country) => country.notes > 0).sort((a, b) => b.notes - a.notes),
+    []
+  );
+
   return (
-    <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#fcfbf8' }}>
-      <img data-lovable-blank-page-placeholder="REMOVE_THIS" src="/placeholder.svg" alt="Your app will live here!" />
+    <div className="relative h-screen w-screen overflow-hidden bg-[#0F172A] text-[#E5E7EB]">
+      <WorldCollectionMap
+        collection={collectionData}
+        onCountrySelect={handleCountrySelect}
+        selectedCountry={selectedCountry?.country}
+      />
+
+      <CollectionPanel
+        side="left"
+        title="Coin Collection"
+        isOpen={isCoinsOpen}
+        onToggle={() => setIsCoinsOpen((prev) => !prev)}
+        items={countriesWithCoins}
+        type="coins"
+      />
+
+      <CollectionPanel
+        side="right"
+        title="Banknote Collection"
+        isOpen={isNotesOpen}
+        onToggle={() => setIsNotesOpen((prev) => !prev)}
+        items={countriesWithNotes}
+        type="notes"
+      />
+
+      {selectedCountry && (
+        <CountryInfoPanel selectedCountry={selectedCountry} onClose={() => setSelectedCountry(null)} />
+      )}
+
+      <ColorLegend isRightPanelOpen={isNotesOpen} />
     </div>
   );
 };
-
-const Index = PlaceholderIndex;
 
 export default Index;
