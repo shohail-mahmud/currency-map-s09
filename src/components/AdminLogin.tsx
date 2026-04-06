@@ -17,7 +17,7 @@ export function AdminLogin() {
         type="button"
         onClick={signOut}
         className="fixed left-3 top-3 z-40 px-2 py-1 text-[10px] text-[#9CA3AF] opacity-60 hover:opacity-100 transition-opacity sm:left-4 sm:top-4 sm:text-[11px]"
-        style={{ fontFamily: '"Playfair Display", Georgia, serif' }}
+        style={{ fontFamily: '"Playfair Display", Georgia, "Times New Roman", serif', letterSpacing: "0.06em" }}
       >
         Logout
       </button>
@@ -30,7 +30,7 @@ export function AdminLogin() {
         type="button"
         onClick={() => setIsOpen(true)}
         className="fixed left-3 top-3 z-40 px-2 py-1 text-[10px] text-[#9CA3AF] opacity-40 hover:opacity-80 transition-opacity sm:left-4 sm:top-4 sm:text-[11px]"
-        style={{ fontFamily: '"Playfair Display", Georgia, serif' }}
+        style={{ fontFamily: '"Playfair Display", Georgia, "Times New Roman", serif', letterSpacing: "0.06em", fontWeight: 600 }}
       >
         Admin
       </button>
