@@ -10,7 +10,7 @@ type CollectionPanelProps = {
 };
 
 export function CollectionPanel({ side, title, isOpen, onToggle, items, type }: CollectionPanelProps) {
-  const panelWidth = "min(200px, 56vw)";
+  const panelWidth = "min(160px, 42vw)";
   const isLeft = side === "left";
   const panelPositionClass = isLeft
     ? isOpen ? "translate-x-0" : "-translate-x-full"
@@ -36,7 +36,7 @@ export function CollectionPanel({ side, title, isOpen, onToggle, items, type }: 
       </button>
 
       <aside
-        className={`fixed top-0 z-20 h-screen w-[min(200px,56vw)] overflow-y-auto border-[#1F2933] bg-[#111827] transition-transform duration-150 ${panelSideClass} ${panelPositionClass}`}
+        className={`fixed top-0 z-20 h-screen w-[min(160px,42vw)] overflow-y-auto border-[#1F2933] bg-[#111827] transition-transform duration-150 ${panelSideClass} ${panelPositionClass}`}
       >
         <div className="border-b border-[#1F2933] px-3 py-2.5 sm:px-4 sm:py-3">
           <h2 className="text-sm font-medium tracking-wide text-[#E5E7EB]">{title}</h2>

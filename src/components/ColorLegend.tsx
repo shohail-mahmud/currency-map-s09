@@ -15,7 +15,7 @@ const AUTO_HIDE_MS = 10_000;
 
 export function ColorLegend({ isRightPanelOpen }: ColorLegendProps) {
   const [isHidden, setIsHidden] = useState(false);
-  const rightOffset = isRightPanelOpen ? "calc(min(200px, 56vw) + 16px)" : "16px";
+  const rightOffset = isRightPanelOpen ? "calc(min(160px, 42vw) + 16px)" : "16px";
 
   useEffect(() => {
     if (isHidden) return;
