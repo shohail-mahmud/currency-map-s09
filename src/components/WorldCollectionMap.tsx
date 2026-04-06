@@ -14,8 +14,8 @@ type WorldCollectionMapProps = {
 
 const GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 const COUNTRY_NAMES_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.tsv";
-const MAP_WIDTH = 1200;
-const MAP_HEIGHT = 700;
+const MAP_WIDTH = 1400;
+const MAP_HEIGHT = 900;
 const MIN_ZOOM = 1;
 const MAX_ZOOM = 6;
 

@@ -10,9 +10,8 @@ import { useAuth } from "../hooks/useAuth";
 import type { CountryCollection } from "../types/collection";
 
 const Index = () => {
-  const isMobileViewport = typeof window !== "undefined" && window.innerWidth < 768;
-  const [isCoinsOpen, setIsCoinsOpen] = useState(!isMobileViewport);
-  const [isNotesOpen, setIsNotesOpen] = useState(!isMobileViewport);
+  const [isCoinsOpen, setIsCoinsOpen] = useState(false);
+  const [isNotesOpen, setIsNotesOpen] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<CountryCollection | null>(null);
   const [showAddPanel, setShowAddPanel] = useState(false);
 
