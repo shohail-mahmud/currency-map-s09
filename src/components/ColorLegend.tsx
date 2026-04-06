@@ -1,12 +1,27 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type ColorLegendProps = {
   isRightPanelOpen: boolean;
 };
 
+const LEGEND_ITEMS = [
+  { color: "#EF4444", label: "Coins only" },
+  { color: "#3B82F6", label: "Banknotes only" },
+  { color: "#EAB308", label: "Coins and banknotes" },
+  { color: "#374151", label: "No collection" },
+];
+
+const AUTO_HIDE_MS = 10_000;
+
 export function ColorLegend({ isRightPanelOpen }: ColorLegendProps) {
   const [isHidden, setIsHidden] = useState(false);
   const rightOffset = isRightPanelOpen ? "calc(min(200px, 56vw) + 16px)" : "16px";
+
+  useEffect(() => {
+    if (isHidden) return;
+    const timer = setTimeout(() => setIsHidden(true), AUTO_HIDE_MS);
+    return () => clearTimeout(timer);
+  }, [isHidden]);
 
   if (isHidden) {
     return (
@@ -37,10 +52,15 @@ export function ColorLegend({ isRightPanelOpen }: ColorLegendProps) {
         </button>
       </div>
       <ul className="space-y-1 text-[#9CA3AF]">
-        <li>Red: Coins only</li>
-        <li>Blue: Banknotes only</li>
-        <li>Yellow: Coins and banknotes</li>
-        <li>Grey: No collection</li>
+        {LEGEND_ITEMS.map((item) => (
+          <li key={item.label} className="flex items-center gap-1.5">
+            <span
+              className="inline-block h-2.5 w-2.5 shrink-0 rounded-sm"
+              style={{ backgroundColor: item.color }}
+            />
+            {item.label}
+          </li>
+        ))}
       </ul>
     </aside>
   );
