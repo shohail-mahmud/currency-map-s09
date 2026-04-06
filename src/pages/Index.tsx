@@ -4,6 +4,7 @@ import { ColorLegend } from "../components/ColorLegend";
 import { CountryInfoPanel } from "../components/CountryInfoPanel";
 import { WorldCollectionMap } from "../components/WorldCollectionMap";
 import { AdminLogin } from "../components/AdminLogin";
+import { AddCountryPanel } from "../components/AddCountryPanel";
 import { useCollectionData } from "../hooks/useCollectionData";
 import { useAuth } from "../hooks/useAuth";
 import type { CountryCollection } from "../types/collection";
@@ -13,11 +14,13 @@ const Index = () => {
   const [isCoinsOpen, setIsCoinsOpen] = useState(!isMobileViewport);
   const [isNotesOpen, setIsNotesOpen] = useState(!isMobileViewport);
   const [selectedCountry, setSelectedCountry] = useState<CountryCollection | null>(null);
+  const [showAddPanel, setShowAddPanel] = useState(false);
 
   const { data: collectionData = [], isLoading, refetch } = useCollectionData();
   const { user } = useAuth();
 
   const handleCountrySelect = (country: CountryCollection) => {
+    setShowAddPanel(false);
     setSelectedCountry((previous) => (previous?.country === country.country ? null : country));
   };
 
@@ -48,6 +51,18 @@ const Index = () => {
 
       <AdminLogin />
 
+      {/* Add button - only visible when logged in */}
+      {user && !showAddPanel && !selectedCountry && (
+        <button
+          type="button"
+          onClick={() => setShowAddPanel(true)}
+          className="fixed left-3 top-10 z-40 px-2 py-1 text-[10px] text-[#9CA3AF] opacity-60 hover:opacity-100 transition-opacity sm:left-4 sm:top-11 sm:text-[11px]"
+          style={{ fontFamily: '"Playfair Display", Georgia, serif' }}
+        >
+          + Add
+        </button>
+      )}
+
       <CollectionPanel
         side="left"
         title="Coin Collection"
@@ -75,6 +90,14 @@ const Index = () => {
             refetch();
             setSelectedCountry(null);
           }}
+        />
+      )}
+
+      {showAddPanel && (
+        <AddCountryPanel
+          onClose={() => setShowAddPanel(false)}
+          onAdded={() => refetch()}
+          existingCountries={collectionData.map(c => c.country)}
         />
       )}
 
