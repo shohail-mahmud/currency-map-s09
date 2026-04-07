@@ -71,6 +71,7 @@ const Index = () => {
         onToggle={() => setIsCoinsOpen((prev) => !prev)}
         items={countriesWithCoins}
         type="coins"
+        onCountryClick={(name) => { setZoomToCountry(null); setTimeout(() => setZoomToCountry(name), 0); }}
       />
 
       <CollectionPanel
