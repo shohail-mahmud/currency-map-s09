@@ -14,6 +14,7 @@ const Index = () => {
   const [isNotesOpen, setIsNotesOpen] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<CountryCollection | null>(null);
   const [showAddPanel, setShowAddPanel] = useState(false);
+  const [zoomToCountry, setZoomToCountry] = useState<string | null>(null);
 
   const { data: collectionData = [], isLoading, refetch } = useCollectionData();
   const { user } = useAuth();
@@ -46,6 +47,7 @@ const Index = () => {
         collection={collectionData}
         onCountrySelect={handleCountrySelect}
         selectedCountry={selectedCountry?.country}
+        zoomToCountry={zoomToCountry}
       />
 
       <AdminLogin />
@@ -69,6 +71,7 @@ const Index = () => {
         onToggle={() => setIsCoinsOpen((prev) => !prev)}
         items={countriesWithCoins}
         type="coins"
+        onCountryClick={(name) => { setZoomToCountry(null); setTimeout(() => setZoomToCountry(name), 0); }}
       />
 
       <CollectionPanel
@@ -78,6 +81,7 @@ const Index = () => {
         onToggle={() => setIsNotesOpen((prev) => !prev)}
         items={countriesWithNotes}
         type="notes"
+        onCountryClick={(name) => { setZoomToCountry(null); setTimeout(() => setZoomToCountry(name), 0); }}
       />
 
       {selectedCountry && (

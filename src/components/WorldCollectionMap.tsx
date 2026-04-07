@@ -10,6 +10,7 @@ type WorldCollectionMapProps = {
   collection: CountryCollection[];
   selectedCountry?: string;
   onCountrySelect: (country: CountryCollection) => void;
+  zoomToCountry?: string | null;
 };
 
 const GEO_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
@@ -47,7 +48,7 @@ function brightenHex(hex: string, amount: number) {
   return `#${((1 << 24) + (nextR << 16) + (nextG << 8) + nextB).toString(16).slice(1).toUpperCase()}`;
 }
 
-export function WorldCollectionMap({ collection, selectedCountry, onCountrySelect }: WorldCollectionMapProps) {
+export function WorldCollectionMap({ collection, selectedCountry, onCountrySelect, zoomToCountry }: WorldCollectionMapProps) {
   const [features, setFeatures] = useState<MapFeature[]>([]);
   const [hoveredCountry, setHoveredCountry] = useState<string | null>(null);
   const [zoom, setZoom] = useState(1);
@@ -167,6 +168,35 @@ export function WorldCollectionMap({ collection, selectedCountry, onCountrySelec
 
   const pathGenerator = useMemo(() => geoPath(projection), [projection]);
 
+  // Zoom to country when zoomToCountry changes
+  useEffect(() => {
+    if (!zoomToCountry || features.length === 0) return;
+
+    const target = features.find(
+      (f) => (f.properties?.name ?? "").toLowerCase() === zoomToCountry.toLowerCase()
+    );
+    if (!target) return;
+
+    const bounds = pathGenerator.bounds(target as never);
+    if (!bounds) return;
+
+    const [[x0, y0], [x1, y1]] = bounds;
+    const bw = x1 - x0;
+    const bh = y1 - y0;
+    const cx = (x0 + x1) / 2;
+    const cy = (y0 + y1) / 2;
+
+    const targetZoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM + 0.5, Math.min(MAP_WIDTH / bw, MAP_HEIGHT / bh) * 0.5));
+
+    const nextPan = clampPan(
+      { x: MAP_WIDTH / 2 - cx * targetZoom, y: MAP_HEIGHT / 2 - cy * targetZoom },
+      targetZoom
+    );
+
+    setZoom(targetZoom);
+    setPan(nextPan);
+  }, [zoomToCountry, features, pathGenerator]);
+
   const getCountryData = (countryName: string) => {
     const existing = collectionMap.get(countryName.toLowerCase());
     return existing ?? { country: countryName, coins: 0, notes: 0 };
@@ -257,8 +287,8 @@ export function WorldCollectionMap({ collection, selectedCountry, onCountrySelec
                 key={`${country.id}-${countryName}`}
                 d={countryPath}
                 fill={getCountryFill(countryName)}
-                stroke={selectedCountry === countryName ? "#E5E7EB" : "#0F172A"}
-                strokeWidth={selectedCountry === countryName ? 0.9 : 0.5}
+                stroke={selectedCountry === countryName ? "#E5E7EB" : collectionMap.has(countryName.toLowerCase()) ? "#1E293B" : "#0F172A"}
+                strokeWidth={selectedCountry === countryName ? 1.2 : collectionMap.has(countryName.toLowerCase()) ? 0.8 : 0.4}
                 className="cursor-pointer"
                 onMouseEnter={() => setHoveredCountry(countryName)}
                 onMouseLeave={() => setHoveredCountry(null)}

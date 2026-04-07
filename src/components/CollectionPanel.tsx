@@ -7,9 +7,10 @@ type CollectionPanelProps = {
   onToggle: () => void;
   items: CountryCollection[];
   type: "coins" | "notes";
+  onCountryClick?: (countryName: string) => void;
 };
 
-export function CollectionPanel({ side, title, isOpen, onToggle, items, type }: CollectionPanelProps) {
+export function CollectionPanel({ side, title, isOpen, onToggle, items, type, onCountryClick }: CollectionPanelProps) {
   const panelWidth = "min(160px, 42vw)";
   const isLeft = side === "left";
   const panelPositionClass = isLeft
@@ -44,7 +45,11 @@ export function CollectionPanel({ side, title, isOpen, onToggle, items, type }: 
 
         <ul className="divide-y divide-[#1F2933]">
           {items.map((country) => (
-            <li key={country.country} className="px-3 py-2.5 text-sm text-[#E5E7EB] sm:px-4">
+            <li
+              key={country.country}
+              className="cursor-pointer px-3 py-2.5 text-sm text-[#E5E7EB] hover:bg-[#1F2933] transition-colors sm:px-4"
+              onClick={() => onCountryClick?.(country.country)}
+            >
               {country.country}
             </li>
           ))}
