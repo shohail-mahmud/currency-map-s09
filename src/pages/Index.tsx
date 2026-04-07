@@ -47,6 +47,7 @@ const Index = () => {
         collection={collectionData}
         onCountrySelect={handleCountrySelect}
         selectedCountry={selectedCountry?.country}
+        zoomToCountry={zoomToCountry}
       />
 
       <AdminLogin />
