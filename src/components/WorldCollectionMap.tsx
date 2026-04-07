@@ -287,8 +287,8 @@ export function WorldCollectionMap({ collection, selectedCountry, onCountrySelec
                 key={`${country.id}-${countryName}`}
                 d={countryPath}
                 fill={getCountryFill(countryName)}
-                stroke={selectedCountry === countryName ? "#E5E7EB" : "#0F172A"}
-                strokeWidth={selectedCountry === countryName ? 0.9 : 0.5}
+                stroke={selectedCountry === countryName ? "#E5E7EB" : collectionMap.has(countryName.toLowerCase()) ? "#1E293B" : "#0F172A"}
+                strokeWidth={selectedCountry === countryName ? 1.2 : collectionMap.has(countryName.toLowerCase()) ? 0.8 : 0.4}
                 className="cursor-pointer"
                 onMouseEnter={() => setHoveredCountry(countryName)}
                 onMouseLeave={() => setHoveredCountry(null)}
