@@ -154,6 +154,35 @@ export function WorldCollectionMap({ collection, selectedCountry, onCountrySelec
     void loadWorld();
   }, []);
 
+  // Zoom to country when zoomToCountry changes
+  useEffect(() => {
+    if (!zoomToCountry || features.length === 0) return;
+
+    const target = features.find(
+      (f) => (f.properties?.name ?? "").toLowerCase() === zoomToCountry.toLowerCase()
+    );
+    if (!target) return;
+
+    const bounds = pathGenerator.bounds(target as never);
+    if (!bounds) return;
+
+    const [[x0, y0], [x1, y1]] = bounds;
+    const bw = x1 - x0;
+    const bh = y1 - y0;
+    const cx = (x0 + x1) / 2;
+    const cy = (y0 + y1) / 2;
+
+    const targetZoom = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM + 0.5, Math.min(MAP_WIDTH / bw, MAP_HEIGHT / bh) * 0.5));
+
+    const nextPan = clampPan(
+      { x: MAP_WIDTH / 2 - cx * targetZoom, y: MAP_HEIGHT / 2 - cy * targetZoom },
+      targetZoom
+    );
+
+    setZoom(targetZoom);
+    setPan(nextPan);
+  }, [zoomToCountry, features, pathGenerator]);
+
   const collectionMap = useMemo(() => {
     return new Map(collection.map((item) => [item.country.toLowerCase(), item]));
   }, [collection]);
