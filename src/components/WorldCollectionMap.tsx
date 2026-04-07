@@ -154,6 +154,20 @@ export function WorldCollectionMap({ collection, selectedCountry, onCountrySelec
     void loadWorld();
   }, []);
 
+  const collectionMap = useMemo(() => {
+    return new Map(collection.map((item) => [item.country.toLowerCase(), item]));
+  }, [collection]);
+
+  const projection = useMemo(() => {
+    const projectionScale = geoNaturalEarth1();
+    if (features.length > 0) {
+      projectionScale.fitSize([MAP_WIDTH, MAP_HEIGHT], { type: "FeatureCollection", features });
+    }
+    return projectionScale;
+  }, [features]);
+
+  const pathGenerator = useMemo(() => geoPath(projection), [projection]);
+
   // Zoom to country when zoomToCountry changes
   useEffect(() => {
     if (!zoomToCountry || features.length === 0) return;
@@ -182,20 +196,6 @@ export function WorldCollectionMap({ collection, selectedCountry, onCountrySelec
     setZoom(targetZoom);
     setPan(nextPan);
   }, [zoomToCountry, features, pathGenerator]);
-
-  const collectionMap = useMemo(() => {
-    return new Map(collection.map((item) => [item.country.toLowerCase(), item]));
-  }, [collection]);
-
-  const projection = useMemo(() => {
-    const projectionScale = geoNaturalEarth1();
-    if (features.length > 0) {
-      projectionScale.fitSize([MAP_WIDTH, MAP_HEIGHT], { type: "FeatureCollection", features });
-    }
-    return projectionScale;
-  }, [features]);
-
-  const pathGenerator = useMemo(() => geoPath(projection), [projection]);
 
   const getCountryData = (countryName: string) => {
     const existing = collectionMap.get(countryName.toLowerCase());
