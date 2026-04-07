@@ -47,7 +47,7 @@ function brightenHex(hex: string, amount: number) {
   return `#${((1 << 24) + (nextR << 16) + (nextG << 8) + nextB).toString(16).slice(1).toUpperCase()}`;
 }
 
-export function WorldCollectionMap({ collection, selectedCountry, onCountrySelect }: WorldCollectionMapProps) {
+export function WorldCollectionMap({ collection, selectedCountry, onCountrySelect, zoomToCountry }: WorldCollectionMapProps) {
   const [features, setFeatures] = useState<MapFeature[]>([]);
   const [hoveredCountry, setHoveredCountry] = useState<string | null>(null);
   const [zoom, setZoom] = useState(1);
