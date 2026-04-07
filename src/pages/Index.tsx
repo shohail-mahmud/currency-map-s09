@@ -14,6 +14,7 @@ const Index = () => {
   const [isNotesOpen, setIsNotesOpen] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<CountryCollection | null>(null);
   const [showAddPanel, setShowAddPanel] = useState(false);
+  const [zoomToCountry, setZoomToCountry] = useState<string | null>(null);
 
   const { data: collectionData = [], isLoading, refetch } = useCollectionData();
   const { user } = useAuth();
