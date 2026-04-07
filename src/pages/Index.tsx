@@ -81,6 +81,7 @@ const Index = () => {
         onToggle={() => setIsNotesOpen((prev) => !prev)}
         items={countriesWithNotes}
         type="notes"
+        onCountryClick={(name) => { setZoomToCountry(null); setTimeout(() => setZoomToCountry(name), 0); }}
       />
 
       {selectedCountry && (
