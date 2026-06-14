@@ -228,7 +228,22 @@ export function WorldCollectionMap({ collection, selectedCountry, onCountrySelec
   };
 
   const handlePointerDown = (event: React.PointerEvent<SVGSVGElement>) => {
-    event.preventDefault();
+    (event.target as Element).setPointerCapture?.(event.pointerId);
+    pointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
+
+    if (pointersRef.current.size === 2) {
+      const pts = Array.from(pointersRef.current.values());
+      const dx = pts[0].x - pts[1].x;
+      const dy = pts[0].y - pts[1].y;
+      const dist = Math.hypot(dx, dy);
+      const midClient = { x: (pts[0].x + pts[1].x) / 2, y: (pts[0].y + pts[1].y) / 2 };
+      const center = getSvgPointFromClient(midClient.x, midClient.y);
+      pinchRef.current = { dist, zoom, center, pan };
+      setIsPanGesture(true);
+      setIsDragging(false);
+      return;
+    }
+
     dragStartRef.current = { x: event.clientX, y: event.clientY };
     panStartRef.current = pan;
     setIsPanGesture(false);
@@ -236,8 +251,30 @@ export function WorldCollectionMap({ collection, selectedCountry, onCountrySelec
   };
 
   const handlePointerMove = (event: React.PointerEvent<SVGSVGElement>) => {
-    if (!isDragging) return;
+    if (pointersRef.current.has(event.pointerId)) {
+      pointersRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    }
 
+    if (pinchRef.current && pointersRef.current.size >= 2) {
+      const pts = Array.from(pointersRef.current.values()).slice(0, 2);
+      const dx = pts[0].x - pts[1].x;
+      const dy = pts[0].y - pts[1].y;
+      const dist = Math.hypot(dx, dy);
+      const scale = dist / pinchRef.current.dist;
+      const nextZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, pinchRef.current.zoom * scale));
+      const { center, zoom: z0, pan: p0 } = pinchRef.current;
+      const worldX = (center.x - p0.x) / z0;
+      const worldY = (center.y - p0.y) / z0;
+      const nextPan = clampPan(
+        { x: center.x - worldX * nextZoom, y: center.y - worldY * nextZoom },
+        nextZoom
+      );
+      setZoom(nextZoom);
+      setPan(nextPan);
+      return;
+    }
+
+    if (!isDragging) return;
     const deltaX = event.clientX - dragStartRef.current.x;
     const deltaY = event.clientY - dragStartRef.current.y;
     if (Math.abs(deltaX) > 2 || Math.abs(deltaY) > 2) {
@@ -246,8 +283,10 @@ export function WorldCollectionMap({ collection, selectedCountry, onCountrySelec
     setPan(clampPan({ x: panStartRef.current.x + deltaX, y: panStartRef.current.y + deltaY }, zoom));
   };
 
-  const handlePointerUp = () => {
-    setIsDragging(false);
+  const handlePointerUp = (event?: React.PointerEvent<SVGSVGElement>) => {
+    if (event) pointersRef.current.delete(event.pointerId);
+    if (pointersRef.current.size < 2) pinchRef.current = null;
+    if (pointersRef.current.size === 0) setIsDragging(false);
   };
 
   return (
