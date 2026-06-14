@@ -71,12 +71,12 @@ export function AdminLogin() {
         </div>
 
         <input
-          type="email"
-          placeholder="Email"
+          type="text"
+          placeholder="Username"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          autoComplete="email"
+          autoComplete="username"
           className="mb-1.5 w-full border border-[#1F2933] bg-[#0F172A] px-2 py-1.5 text-[11px] text-[#E5E7EB] placeholder-[#6B7280] outline-none focus:border-[#374151]"
         />
         <input
