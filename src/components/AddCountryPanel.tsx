@@ -93,23 +93,28 @@ export function AddCountryPanel({ onClose, onAdded, existingCountries }: AddCoun
         <div className="relative">
           <input
             type="text"
-            placeholder="Search country..."
+            placeholder="Search or pick a country..."
             value={selectedCountry || search}
+            onFocus={() => setShowList(true)}
+            onBlur={() => setTimeout(() => setShowList(false), 150)}
             onChange={(e) => {
               setSearch(e.target.value);
               setSelectedCountry("");
+              setShowList(true);
             }}
             className="w-full border border-[#1F2933] bg-[#0F172A] px-2 py-1.5 text-[11px] text-[#E5E7EB] placeholder-[#6B7280] outline-none focus:border-[#374151]"
           />
-          {filtered.length > 0 && !selectedCountry && (
-            <ul className="absolute left-0 right-0 top-full z-10 max-h-[150px] overflow-y-auto border border-[#1F2933] bg-[#111827]">
+          {showList && !selectedCountry && filtered.length > 0 && (
+            <ul className="absolute left-0 right-0 top-full z-10 max-h-[180px] overflow-y-auto border border-[#1F2933] bg-[#111827]">
               {filtered.map((c) => (
                 <li key={c}>
                   <button
                     type="button"
+                    onMouseDown={(e) => e.preventDefault()}
                     onClick={() => {
                       setSelectedCountry(c);
                       setSearch("");
+                      setShowList(false);
                     }}
                     className="w-full px-2 py-1.5 text-left text-[11px] text-[#E5E7EB] hover:bg-[#1F2933]"
                   >
