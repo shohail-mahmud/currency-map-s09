@@ -41,7 +41,8 @@ export function AdminLogin() {
     e.preventDefault();
     setError("");
     setSubmitting(true);
-    const { error: signInError } = await signIn(email, password);
+    const loginEmail = email.includes("@") ? email : `${email.toLowerCase()}@currencymap.local`;
+    const { error: signInError } = await signIn(loginEmail, password);
     if (signInError) {
       setError(signInError.message);
     } else {
