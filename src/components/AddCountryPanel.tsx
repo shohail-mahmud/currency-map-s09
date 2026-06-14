@@ -39,15 +39,15 @@ export function AddCountryPanel({ onClose, onAdded, existingCountries }: AddCoun
   const [notes, setNotes] = useState(0);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [showList, setShowList] = useState(false);
 
   const existingSet = useMemo(() => new Set(existingCountries.map(c => c.toLowerCase())), [existingCountries]);
 
   const filtered = useMemo(() => {
-    if (!search.trim()) return [];
-    const q = search.toLowerCase();
-    return ALL_COUNTRIES
-      .filter(c => c.toLowerCase().includes(q) && !existingSet.has(c.toLowerCase()))
-      .slice(0, 6);
+    const q = search.trim().toLowerCase();
+    const base = ALL_COUNTRIES.filter(c => !existingSet.has(c.toLowerCase()));
+    if (!q) return base;
+    return base.filter(c => c.toLowerCase().includes(q));
   }, [search, existingSet]);
 
   const handleSave = async () => {
