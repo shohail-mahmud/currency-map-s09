@@ -59,6 +59,8 @@ export function WorldCollectionMap({ collection, selectedCountry, onCountrySelec
   const svgRef = useRef<SVGSVGElement | null>(null);
   const dragStartRef = useRef({ x: 0, y: 0 });
   const panStartRef = useRef({ x: 0, y: 0 });
+  const pointersRef = useRef<Map<number, { x: number; y: number }>>(new Map());
+  const pinchRef = useRef<{ dist: number; zoom: number; center: { x: number; y: number }; pan: { x: number; y: number } } | null>(null);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
