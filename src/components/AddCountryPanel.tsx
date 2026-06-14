@@ -47,7 +47,23 @@ export function AddCountryPanel({ onClose, onAdded, existingCountries }: AddCoun
     const q = search.trim().toLowerCase();
     const base = ALL_COUNTRIES.filter(c => !existingSet.has(c.toLowerCase()));
     if (!q) return base;
-    return base.filter(c => c.toLowerCase().includes(q));
+    const exact = base.filter(c => c.toLowerCase().includes(q));
+    if (exact.length > 0) return exact;
+    // Fuzzy fallback: match countries sharing the first 1-2 letters or most chars
+    const qChars = new Set(q);
+    return base
+      .map(c => {
+        const lc = c.toLowerCase();
+        let score = 0;
+        if (lc[0] === q[0]) score += 3;
+        if (q.length > 1 && lc.startsWith(q.slice(0, 2))) score += 4;
+        for (const ch of qChars) if (lc.includes(ch)) score += 1;
+        return { c, score };
+      })
+      .filter(x => x.score >= 3)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 10)
+      .map(x => x.c);
   }, [search, existingSet]);
 
   const handleSave = async () => {
